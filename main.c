@@ -1,8 +1,9 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-#include <ctype.h>
 #include <string.h>
+#include <ctype.h>
+#include <math.h>
 
 typedef struct
 {
@@ -24,7 +25,7 @@ List* createList()
     return list;
 }
 
-float pop(Stack *s)
+float pop(Stack* s)
 {
     if (s == NULL || s->head == NULL) return NAN;
 
@@ -106,20 +107,20 @@ float operation(char operator, float oa1, float oa2)
 {
     switch (operator)
     {
-        case '+':
-            return oa1 + oa2;
-        case '-':
-            return oa1 - oa2;
-        case '*':
-            return oa1 * oa2;
-        case '/':
-            return oa1 / oa2;
-        case '%':
-            return (float) ((int) oa1 % (int)oa2);
-        case '^':
-            return pow(oa1, oa2);
-        default:
-            return 0;
+    case '+':
+        return oa1 + oa2;
+    case '-':
+        return oa1 - oa2;
+    case '*':
+        return oa1 * oa2;
+    case '/':
+        return oa1 / oa2;
+    case '%':
+        return (float)((int)oa1 % (int)oa2);
+    case '^':
+        return pow(oa1, oa2);
+    default:
+        return 0;
     }
 }
 
@@ -185,12 +186,16 @@ float evaluatePostfix(char* postfix)
     Stack* stack = initialize();
     char* token = strtok(postfix, " ");
     float oa1, oa2;
-    while (token != NULL) {
-        if (strlen(token) == 1 && is_operator(token[0])) {
+    while (token != NULL)
+    {
+        if (strlen(token) == 1 && is_operator(token[0]))
+        {
             oa2 = pop(stack);
             oa1 = pop(stack);
             push(stack, operation(token[0], oa1, oa2));
-        } else {
+        }
+        else
+        {
             sscanf(token, "%f", &oa1);
             push(stack, oa1);
         }
@@ -201,18 +206,22 @@ float evaluatePostfix(char* postfix)
     return val;
 }
 
+
 int main(void)
 {
     char buffer[100];
     printf("Input (Infix): ");
+
     fgets(buffer, 100, stdin);
     size_t l = 0;
-    if (buffer[(l = strlen(buffer)-1)] == '\n') {
+    if (buffer[(l = strlen(buffer)-1)] == '\n') 
         buffer[l] = '\0';
-    }
+    
+    buffer[strlen(buffer) - 1] = '\0';
+
     char* postfix = infix_to_postfix(buffer);
     printf("Output (Postfix): %s\n", postfix);
-    printf("Value: %f\n", evaluatePostfix(postfix));
+    printf("Value: %.3f", evaluatePostfix(postfix))
     free(postfix);
     printf("Press Enter to exit.");
     fgets(buffer, 3, stdin);
