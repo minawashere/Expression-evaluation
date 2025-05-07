@@ -1,8 +1,9 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-#include <ctype.h>
 #include <string.h>
+#include <ctype.h>
+#include <math.h>
 
 typedef struct
 {
@@ -24,40 +25,42 @@ List* createList()
     return list;
 }
 
-float pop(List* list)
+float pop(Stack* s)
 {
-    if (list == NULL || list->head == NULL) return NAN;
+    if (s == NULL || s->head == NULL) return NAN;
 
-    const float x = list->head->data;
-    Node* temp = (Node*)list->head->next;
-    free(list->head);
-    list->head = temp;
+    const float x = s->head->data;
+    Node* temp = (Node*)s->head->next;
+    free(s->head);
+    s->head = temp;
     return x;
 }
 
-void destruct_stack(List* list)
+void destruct_stack(Stack* s)
 {
-    if (list == NULL) return;
-    while (list->head != NULL)
+    if (s == NULL) return;
+    while (s->head != NULL)
     {
-        pop(list);
+        pop(s);
     }
-    free(list);
+    free(s);
 }
 
-void push(List* list, float x)
+void push(Stack* s, float value)
 {
+    if (s == NULL)
+        return;
     Node* new = malloc(sizeof(Node));
-    if (list->head == NULL)
+    if (s->head == NULL)
     {
-        list->head = new;
+        s->head = new;
         new->next = NULL;
-        new->data = x;
+        new->data = value;
         return;
     }
-    new->data = x;
-    new->next = (struct Node*)list->head;
-    list->head = new;
+    new->data = value;
+    new->next = (struct Node*)s->head;
+    s->head = new;
 }
 
 Stack* initialize()
@@ -98,6 +101,27 @@ int precedence(char op)
 int is_operator(const char op)
 {
     return op == '+' || op == '-' || op == '*' || op == '/' || op == '%' || op == '^';
+}
+
+float operation(char operator, float oa1, float oa2)
+{
+    switch (operator)
+    {
+    case '+':
+        return oa1 + oa2;
+    case '-':
+        return oa1 - oa2;
+    case '*':
+        return oa1 * oa2;
+    case '/':
+        return oa1 / oa2;
+    case '%':
+        return (float)((int)oa1 % (int)oa2);
+    case '^':
+        return pow(oa1, oa2);
+    default:
+        return 0;
+    }
 }
 
 char* infix_to_postfix(char* infix)
@@ -157,14 +181,50 @@ char* infix_to_postfix(char* infix)
     return postfix;
 }
 
+float evaluatePostfix(char* postfix)
+{
+    Stack* stack = initialize();
+    char* token = strtok(postfix, " ");
+    float oa1, oa2;
+    while (token != NULL)
+    {
+        if (strlen(token) == 1 && is_operator(token[0]))
+        {
+            oa2 = pop(stack);
+            oa1 = pop(stack);
+            push(stack, operation(token[0], oa1, oa2));
+        }
+        else
+        {
+            sscanf(token, "%f", &oa1);
+            push(stack, oa1);
+        }
+        token = strtok(NULL, " ");
+    }
+    float val = pop(stack);
+    destruct_stack(stack);
+    return val;
+}
+
 
 int main(void)
 {
     char buffer[100];
+    printf("Input (Infix): ");
+
     fgets(buffer, 100, stdin);
+    size_t l = 0;
+    if (buffer[(l = strlen(buffer))] == '\n')
+    {
+        buffer[l] = '\0';
+    }
     buffer[strlen(buffer) - 1] = '\0';
+
     char* postfix = infix_to_postfix(buffer);
-    printf("%s", postfix);
+    printf("Output (Postfix): %s\n", postfix);
+    printf("Value: %.3f", evaluatePostfix(postfix));
     free(postfix);
+    fgets(buffer, 3, stdin); /* remove */
+    fgets(buffer, 3, stdin); /* remove */
     return 0;
 }
