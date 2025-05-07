@@ -47,6 +47,8 @@ void destruct_stack(Stack* s)
 
 void push(Stack* s, float value)
 {
+    if (s == NULL)
+        return;
     Node* new = malloc(sizeof(Node));
     if (s->head == NULL)
     {
