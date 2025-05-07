@@ -47,6 +47,8 @@ void destruct_stack(List* list)
 
 void push(List* list, float x)
 {
+    if (list == NULL)
+        return;
     Node* new = malloc(sizeof(Node));
     if (list->head == NULL)
     {
@@ -160,11 +162,24 @@ char* infix_to_postfix(char* infix)
 
 int main(void)
 {
-    char buffer[100];
-    fgets(buffer, 100, stdin);
-    buffer[strlen(buffer) - 1] = '\0';
-    char* postfix = infix_to_postfix(buffer);
-    printf("%s", postfix);
-    free(postfix);
-    return 0;
+    // char buffer[100];
+    // fgets(buffer, 100, stdin);
+    // buffer[strlen(buffer) - 1] = '\0';
+    // char* postfix = infix_to_postfix(buffer);
+    // printf("%s", postfix);
+    // free(postfix);
+    // return 0;
+
+    Stack* stack = initialize();
+    push(stack, 1);
+    push(stack, 2);
+    push(stack, 3);
+    push(stack, 4);
+
+    while (!is_empty(stack))
+    {
+        int op = pop(stack);
+        printf("%d", op);
+    }
+    destruct_stack(stack);
 }
