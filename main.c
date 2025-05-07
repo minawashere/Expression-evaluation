@@ -214,17 +214,16 @@ int main(void)
 
     fgets(buffer, 100, stdin);
     size_t l = 0;
-    if (buffer[(l = strlen(buffer))] == '\n')
-    {
+    if (buffer[(l = strlen(buffer)-1)] == '\n') 
         buffer[l] = '\0';
-    }
+    
     buffer[strlen(buffer) - 1] = '\0';
 
     char* postfix = infix_to_postfix(buffer);
     printf("Output (Postfix): %s\n", postfix);
-    printf("Value: %.3f", evaluatePostfix(postfix));
+    printf("Value: %.3f", evaluatePostfix(postfix))
     free(postfix);
-    fgets(buffer, 3, stdin); /* remove */
-    fgets(buffer, 3, stdin); /* remove */
+    printf("Press Enter to exit.");
+    fgets(buffer, 3, stdin);
     return 0;
 }
