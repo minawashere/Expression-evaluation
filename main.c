@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <math.h>
 
 typedef struct
 {
@@ -118,7 +117,7 @@ float operation(char operator, float oa1, float oa2)
     case '%':
         return (float)((int)oa1 % (int)oa2);
     case '^':
-        return pow(oa1, oa2);
+        return powf(oa1, oa2);
     default:
         return 0;
     }
@@ -214,16 +213,12 @@ int main(void)
 
     fgets(buffer, 100, stdin);
     size_t l = 0;
-    if (buffer[(l = strlen(buffer)-1)] == '\n') 
+    if (buffer[(l = strlen(buffer) - 1)] == '\n')
         buffer[l] = '\0';
-    
-    buffer[strlen(buffer) - 1] = '\0';
 
     char* postfix = infix_to_postfix(buffer);
     printf("Output (Postfix): %s\n", postfix);
-    printf("Value: %.3f", evaluatePostfix(postfix))
+    printf("Value: %.3f\n", evaluatePostfix(postfix));
     free(postfix);
-    printf("Press Enter to exit.");
-    fgets(buffer, 3, stdin);
     return 0;
 }
